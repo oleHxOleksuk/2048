@@ -25,6 +25,14 @@ export default class Grid {
         }, [])
     }
 
+    get cellsByRow(){
+        return this.#cells.reduce((cellGrid, cell) => {
+            cellGrid[cell.y] = cellGrid[cell.y] || []
+            cellGrid[cell.y][cell.x] = cell
+            return cellGrid
+        }, [])
+    }
+
     get #emtyCells() {
         return this.#cells.filter(cell => cell.tile == null)
     }
