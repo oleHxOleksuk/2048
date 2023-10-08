@@ -12,24 +12,27 @@ function setupInput() {
     window.addEventListener("keydown", handleInput, {once: true})
 }
 
-function handleInput(e){
+async function handleInput(e){
     switch (e.key) {
         case "ArrowUp":
-            muveUp()
+            await muveUp()
             break
             case "ArrowDown":
-            muveDown()
+            await muveDown()
             break
             case "ArrowLeft":
-            muveLeft()
+            await muveLeft()
             break
             case "ArrowRight":
-            muveRight()
+            await muveRight()
             break
             default:
                 setupInput()
                 return
     }
+
+    grid.cells.forEach(cell => cell.mergeTiles())
+
     setupInput()
 }
 
@@ -50,7 +53,9 @@ function muveRight() {
 }
 
 function slideTiles(cells) {
-    cells.forEach(group => {
+    return Promise.all(
+    cells.flatMat(group => {
+        const promises = []
        for (let i = 1; i < group.length; i++) {
         const cell = group[i]
         if (cell.tile == null) continue
@@ -61,6 +66,7 @@ function slideTiles(cells) {
             lastValidCell = moveToCell
         }
         if(lastValidCell != null){
+            promises.push(cell.tile.waitForTransition())
             if(lastValidCell.tile !== null){
                 lastValidCell.mergeTile = cell.tile
             }else {
@@ -69,5 +75,6 @@ function slideTiles(cells) {
             cell.tile = null
         }
        }
-    });
-}
+       return promises
+    })
+)}
