@@ -13,7 +13,6 @@ function setupInput() {
 }
 
 function handleInput(e){
-    console.log(e.key)
     switch (e.key) {
         case "ArrowUp":
             muveUp()
